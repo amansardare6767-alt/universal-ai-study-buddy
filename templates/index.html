@@ -267,11 +267,9 @@
         let outputBox = document.getElementById(outputId);
         let currentApiKey = document.getElementById('user-key').value.trim();
         
-        // 1. Append the user question beautifully
         outputBox.innerHTML += `<p><strong>You:</strong> ${textInput}</p><p class="loading-status"><i>Connecting to Gemini AI Engine...</i></p>`;
         outputBox.scrollTop = outputBox.scrollHeight;
         
-        // 2. Clear out input bar immediately
         document.getElementById(inputId).value = "";
         updateTracker();
 
@@ -290,13 +288,11 @@
         })
         .then(res => res.json())
         .then(data => { 
-            // 3. Remove the loading placeholder text line
             let loadingLines = outputBox.getElementsByClassName('loading-status');
             while(loadingLines.length > 0){
                 loadingLines[0].parentNode.removeChild(loadingLines[0]);
             }
             
-            // 4. Print your Buddy's answer cleanly!
             outputBox.innerHTML += `<p><strong>Buddy:</strong><br>${data.reply.replace(/\n/g, '<br>')}</p><hr style="border:0; border-top:1px dashed #cbd5e1;">`; 
             outputBox.scrollTop = outputBox.scrollHeight; 
         });
@@ -320,7 +316,9 @@
                 stream: document.getElementById('student-stream').value
             })
         })
-        .then(res => res.json()).then(data => { outputBox.innerHTML = `<b>Buddy:</b>\n${data.reply}`; });
+        .then(res => res.json()).then(data => { 
+            outputBox.innerHTML = `<b>Buddy:</b><br>${data.reply.replace(/\n/g, '<br>')}`; 
+        });
     }
 
     function updateTracker() { questionsAskedCount++; document.getElementById('question-count').innerText = questionsAskedCount; }
@@ -336,7 +334,7 @@
                 body: JSON.stringify({ message: "Tell me a short bedtime story about stars.", mode: 'eli5', api_key: currentApiKey, student_class: 'Preschool (Age 3-5)' })
             })
             .then(res => res.json()).then(data => {
-                outputBox.innerHTML = `<b>Buddy Speaks:</b>\n${data.reply}`;
+                outputBox.innerHTML = `<b>Buddy Speaks:</b><br>${data.reply.replace(/\n/g, '<br>')}`;
                 let speech = new SpeechSynthesisUtterance(data.reply); window.speechSynthesis.speak(speech);
             });
         }, 3000);
@@ -350,7 +348,9 @@
         setTimeout(() => {
             outputBox.innerHTML = "<b>Detected Text Problem:</b> Solve 5x + 3 = 18\n<i>Sending to AI Solver...</i>";
             fetch('/ask_ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Solve 5x + 3 = 18 step by step", mode: 'calculator', api_key: currentApiKey }) })
-            .then(res => res.json()).then(data => { outputBox.innerHTML = `<b>Scanner Explanation Output:</b>\n${data.reply}`; });
+            .then(res => res.json()).then(data => { 
+                outputBox.innerHTML = `<b>Scanner Explanation Output:</b><br>${data.reply.replace(/\n/g, '<br>')}`; 
+            });
         }, 2500);
     }
 </script>
