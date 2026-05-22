@@ -1,24 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    /* Responsive adjustment for all device screens */
-    .container {
-        width: 95%;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 10px;
-    }
-    textarea, input, select {
-        width: 100%;
-        box-sizing: border-box;
-    }
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-</style> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universal AI Study Buddy 20-Feature Hub</title>
@@ -47,6 +29,18 @@
         .input-area { display: flex; gap: 10px; }
         .action-btn { padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .action-btn:hover { background-color: #2b4c7e; }
+
+        /* 📱 Responsive Mobile Adjustments */
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; }
+            .sidebar { width: 100%; box-sizing: border-box; height: 250px; }
+            .main-content { padding: 10px; width: 100%; box-sizing: border-box; }
+            .container { padding: 15px; }
+            .setup-row { flex-direction: column; gap: 12px; }
+            .setup-group, .api-group { width: 100%; min-width: 100%; }
+            .input-area { flex-direction: column; }
+            .action-btn { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -270,8 +264,15 @@
     function runPipeline(mode, inputId, outputId) {
         let textInput = document.getElementById(inputId).value.trim();
         if(textInput === "") return;
+        
         let outputBox = document.getElementById(outputId);
-        outputBox.innerHTML += `\n\n<b>You:</b> ${textInput}\n<i>Connecting to Gemini AI Engine...</i>`;
+        
+        // 1. Append the user question cleanly so it doesn't vanish
+        outputBox.innerHTML += `<p><strong>You:</strong> ${textInput}</p><p class="loading-status"><i>Connecting to Gemini AI Engine...</i></p>`;
+        outputBox.scrollTop = outputBox.scrollHeight;
+        
+        // 2. Clear out input bar immediately
+        document.getElementById(inputId).value = "";
         updateTracker();
 
         fetch('/ask_ai', {
@@ -286,8 +287,18 @@
                 target_lang: document.getElementById('target-lang') ? document.getElementById('target-lang').value : 'Hindi'
             })
         })
-        .then(res => res.json()).then(data => { outputBox.innerHTML = `<b>Buddy:</b>\n${data.reply}`; outputBox.scrollTop = outputBox.scrollHeight; });
-        document.getElementById(inputId).value = "";
+        .then(res => res.json())
+        .then(data => { 
+            // 3. Remove the loading placeholder text line
+            let loadingLines = outputBox.getElementsByClassName('loading-status');
+            while(loadingLines.length > 0){
+                loadingLines[0].parentNode.removeChild(loadingLines[0]);
+            }
+            
+            // 4. Print your Buddy's answer right underneath your question!
+            outputBox.innerHTML += `<p><strong>Buddy:</strong><br>${data.reply.replace(/\n/g, '<br>')}</p><hr style="border:0; border-top:1px dashed #cbd5e1;">`; 
+            outputBox.scrollTop = outputBox.scrollHeight; 
+        });
     }
 
     function runDirectPrompt(mode, hardcodedPrompt, outputId) {
