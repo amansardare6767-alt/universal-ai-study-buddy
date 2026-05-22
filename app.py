@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, jsonify
-from google import genai
+import google.generativeai as genai
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/ask_ai', methods=['POST'])
 def ask_ai():
@@ -20,17 +19,16 @@ def ask_ai():
         api_key = data.get('api_key', '')
         target_lang = data.get('target_lang', 'Hindi')
 
-        lower_msg = message.lower()
+        # CREATOR QUESTIONS
 
-        # CREATOR SYSTEM
+        lower_msg = message.lower()
 
         creator_questions = [
 
             "who made you",
             "who created you",
-            "who is your creator",
             "who developed you",
-            "who built you",
+            "who is your creator",
             "who owns you"
 
         ]
@@ -42,11 +40,11 @@ def ask_ai():
                 "reply":"""
 🌸 I was created and developed by Mr. Aman Sardare.
 
-He built this AI Study Hub to help students learn in a smart, simple, and friendly way.
+He built this AI Study Hub for students.
 """
             })
 
-        # API KEY CHECK
+        # CHECK API KEY
 
         if not api_key:
 
@@ -56,89 +54,53 @@ He built this AI Study Hub to help students learn in a smart, simple, and friend
 
             })
 
+        # CONFIGURE GEMINI
+
+        genai.configure(api_key=api_key)
+
+        model = genai.GenerativeModel('gemini-1.5-flash')
+
         # AI MODES
 
         prompts = {
 
-            "chat":"""
-You are Universal AI Study Hub.
+            "chat":"You are a humble and helpful AI tutor.",
 
-Speak politely, humbly, professionally, and helpfully.
+            "calculator":"Solve maths step-by-step.",
 
-Explain clearly and simply.
-""",
+            "translator":f"Translate into {target_lang}.",
 
-            "calculator":"""
-Solve maths step-by-step clearly.
-""",
+            "test":"Create mock exam with answers.",
 
-            "translator":f"""
-Translate into {target_lang}.
-""",
+            "notes":"Create structured notes.",
 
-            "test":"""
-Create mock exams with answers.
-""",
+            "visuals":"Create ASCII visuals.",
 
-            "notes":"""
-Create clean notes with headings.
-""",
+            "flashcards":"Create flashcards.",
 
-            "visuals":"""
-Create ASCII diagrams and visuals.
-""",
+            "planner":"Create study timetable.",
 
-            "flashcards":"""
-Create study flashcards.
-""",
+            "eli5":"Explain very simply.",
 
-            "planner":"""
-Create study timetable.
-""",
+            "debate":"Act as debate partner.",
 
-            "eli5":"""
-Explain very simply for kids.
-""",
+            "memory":"Create memory tricks.",
 
-            "debate":"""
-Act as respectful debate partner.
-""",
+            "simulator":"Act as exam simulator.",
 
-            "memory":"""
-Create memory tricks.
-""",
+            "career":"Give career guidance.",
 
-            "simulator":"""
-Act like exam simulator.
-""",
+            "grader":"Grade answer out of 10.",
 
-            "career":"""
-Give career guidance.
-""",
+            "cheatsheet":"Create cheat sheet.",
 
-            "grader":"""
-Grade answers out of 10.
-""",
+            "popculture":"Explain with pop culture.",
 
-            "cheatsheet":"""
-Create compact cheat sheet.
-""",
+            "break":"Give mindfulness exercise.",
 
-            "popculture":"""
-Explain using pop culture.
-""",
+            "voice":"Talk conversationally.",
 
-            "break":"""
-Give mindfulness exercises.
-""",
-
-            "voice":"""
-Talk conversationally.
-""",
-
-            "scanner":"""
-Analyze and solve carefully.
-"""
+            "scanner":"Analyze and solve carefully."
         }
 
         system_prompt = prompts.get(
@@ -146,15 +108,7 @@ Analyze and solve carefully.
             "You are helpful AI assistant."
         )
 
-        client = genai.Client(api_key=api_key)
-
-        try:
-
-            response = client.models.generate_content(
-
-                model="gemini-1.5-flash",
-
-                contents=f"""
+        final_prompt = f"""
 
 SYSTEM:
 {system_prompt}
@@ -162,8 +116,11 @@ SYSTEM:
 USER:
 {message}
 
-                """
-            )
+"""
+
+        try:
+
+            response = model.generate_content(final_prompt)
 
             reply = response.text
 
@@ -172,19 +129,22 @@ USER:
             reply = """
 ⚠️ AI servers are busy right now.
 
-Please try again in a few seconds.
+Please try again later.
 """
 
         return jsonify({
+
             "reply": reply
+
         })
 
     except Exception as e:
 
         return jsonify({
-            "reply": f"❌ Error: {str(e)}"
-        })
 
+            "reply": f"❌ Error: {str(e)}"
+
+        })
 
 if __name__ == "__main__":
     app.run(debug=True)
