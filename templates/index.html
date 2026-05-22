@@ -3,357 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal AI Study Buddy 20-Feature Hub</title>
+    <title>Universal AI Study Hub</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; display: flex; height: 100vh; }
-        .sidebar { width: 290px; background-color: #1a365d; color: white; padding: 20px; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
-        .sidebar h2 { font-size: 16px; margin-bottom: 10px; text-align: center; border-bottom: 2px solid #2b6cb0; padding-bottom: 8px; }
-        .menu-btn { background: none; border: none; color: #cbd5e1; padding: 8px 12px; text-align: left; font-size: 13px; cursor: pointer; border-radius: 6px; transition: 0.15s; }
-        .menu-btn:hover, .menu-btn.active { background-color: #2b6cb0; color: white; }
-        .tracker-box { background: #2d3748; padding: 10px; border-radius: 8px; margin-top: 10px; text-align: center; font-size: 12px; }
-        .main-content { flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
-        .container { width: 100%; max-width: 760px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .setup-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .setup-group { flex: 1; min-width: 130px; }
-        .api-group { flex: 2; min-width: 250px; }
-        label { font-size: 11px; font-weight: bold; color: #4a5568; display: block; margin-bottom: 4px; }
-        select, input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
-        
-        /* Guide Info Styling */
-        .guide-link { font-size: 11px; color: #2b6cb0; cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 4px; display: inline-block; }
-        .guide-box { display: none; background: #fffaf0; border: 1px dashed #dd6b20; padding: 12px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; color: #744210; line-height: 1.5; }
-        
+        body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; display: flex; height: 100vh; }
+        .sidebar { width: 290px; background-color: #1a365d; color: white; padding: 20px; overflow-y: auto; }
+        .menu-btn { background: none; border: none; color: white; padding: 10px; width: 100%; text-align: left; cursor: pointer; }
+        .menu-btn.active { background-color: #2b6cb0; }
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
         .mode-window { display: none; }
         .mode-window.active { display: block; }
-        .display-output { height: 280px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; overflow-y: auto; background: #f8fafc; margin-bottom: 15px; white-space: pre-wrap; font-size: 14px; }
-        .input-area { display: flex; gap: 10px; }
-        .action-btn { padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
-        .action-btn:hover { background-color: #2b4c7e; }
-
-        /* 📱 Responsive Mobile View Media Queries */
-        @media (max-width: 768px) {
-            body { flex-direction: column; height: auto; }
-            .sidebar { width: 100%; box-sizing: border-box; height: 220px; }
-            .main-content { padding: 10px; width: 100%; box-sizing: border-box; }
-            .container { padding: 15px; }
-            .setup-row { flex-direction: column; gap: 12px; }
-            .setup-group, .api-group { width: 100%; min-width: 100%; }
-            .input-area { flex-direction: column; }
-            .action-btn { width: 100%; }
-        }
+        .display-output { height: 300px; border: 1px solid #ccc; padding: 10px; background: white; margin-bottom: 10px; overflow-y: auto; }
+        @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: 100%; height: 200px; } }
     </style>
 </head>
 <body>
-
-<div class="sidebar">
-    <h2>🚀 AI Mega Study Suite</h2>
-    <button class="menu-btn active" id="btn-chat" onclick="switchMode('chat')">💬 Ask AI Tutor</button>
-    <button class="menu-btn" id="btn-calculator" onclick="switchMode('calculator')">🧮 Math Solver</button>
-    <button class="menu-btn" id="btn-translator" onclick="switchMode('translator')">🌐 Language Translator</button>
-    <button class="menu-btn" id="btn-test" onclick="switchMode('test')">⏱️ Test & PYQ Mode</button>
-    <button class="menu-btn" id="btn-notes" onclick="switchMode('notes')">📝 Notes Maker</button>
-    <button class="menu-btn" id="btn-visuals" onclick="switchMode('visuals')">📊 Charts & Diagrams</button>
-    <button class="menu-btn" id="btn-flashcards" onclick="switchMode('flashcards')">🃏 Flashcard Generator</button>
-    <button class="menu-btn" id="btn-planner" onclick="switchMode('planner')">📅 Study Timetable</button>
-    <button class="menu-btn" id="btn-eli5" onclick="switchMode('eli5')">💡 Explain Like I'm 5</button>
-    <button class="menu-btn" id="btn-debate" onclick="switchMode('debate')">⚖️ AI Debate Partner</button>
-    <button class="menu-btn" id="btn-memory" onclick="switchMode('memory')">🏰 Memory Palace Maker</button>
-    <button class="menu-btn" id="btn-simulator" onclick="switchMode('simulator')">🚨 Exam Day Simulator</button>
-    <button class="menu-btn" id="btn-career" onclick="switchMode('career')">💼 Career Counselor</button>
-    <button class="menu-btn" id="btn-grader" onclick="switchMode('grader')">✍️ Essay/Answer Grader</button>
-    <button class="menu-btn" id="btn-cheatsheet" onclick="switchMode('cheatsheet')">🧬 Formula Cheat Sheet</button>
-    <button class="menu-btn" id="btn-popculture" onclick="switchMode('popculture')">🍿 Pop Culture Teacher</button>
-    <button class="menu-btn" id="btn-break" onclick="switchMode('break')">🧘‍♂️ Mindful Break Room</button>
-    <button class="menu-btn" id="btn-voice" onclick="switchMode('voice')">🗣️ Voice Mode (Kids)</button>
-    <button class="menu-btn" id="btn-scanner" onclick="switchMode('scanner')">📂 Textbook Scanner</button>
-
-    <div class="tracker-box" style="border: 1px solid #ecc94b;">
-        🍀 Lucky Mode Active<br>
-        🔥 Study Streak: <span id="streak-count">46</span> Day(s)<br>
-        🎯 System Inputs Processed: <span id="question-count">0</span>
-    </div>
-</div>
-
-<div class="main-content">
-    <div class="container">
-        
-        <div class="setup-row">
-            <div class="setup-group api-group">
-                <label style="color: #2b6cb0;">🔑 Enter Your Gemini API Key</label>
-                <input type="password" id="user-key" placeholder="Paste your AI key here to learn...">
-                <span class="guide-link" onclick="toggleGuide()">ℹ️ How to get your own free API Key?</span>
-            </div>
-            <div class="setup-group">
-                <label>Target Class / Exam</label>
-                <select id="student-class">
-                    <option value="Preschool (Age 3-5)">Preschool (Age 3-5)</option>
-                    <option value="Class 1-2">Class 1-2</option>
-                    <option value="Class 3-5">Class 3-5</option>
-                    <option value="Class 6-8">Class 6-8</option>
-                    <option value="Class 9-10">Class 9-10</option>
-                    <option value="Class 11-12">Class 11-12</option>
-                    <option value="IIT-JEE Prep">IIT-JEE Aspirant</option>
-                    <option value="NEET Prep">NEET Aspirant</option>
-                    <option value="UPSC Prep">UPSC Aspirant</option>
-                </select>
-            </div>
-            <div class="setup-group">
-                <label>Board</label>
-                <select id="student-board">
-                    <option value="CBSE">CBSE</option>
-                    <option value="ICSE">ICSE</option>
-                    <option value="State Board">State Board</option>
-                    <option value="Not Applicable">Competitive Exam</option>
-                </select>
-            </div>
-            <div class="setup-group">
-                <label>Stream</label>
-                <select id="student-stream">
-                    <option value="General">General</option>
-                    <option value="Science">Science</option>
-                    <option value="Commerce">Commerce</option>
-                    <option value="Arts">Arts</option>
-                </select>
-            </div>
+    <div class="sidebar">
+        <h2>🚀 AI Mega Suite</h2>
+        <button class="menu-btn active" id="btn-chat" onclick="switchMode('chat')">💬 Chat</button>
+        <button class="menu-btn" id="btn-calculator" onclick="switchMode('calculator')">🧮 Math</button>
+        <button class="menu-btn" id="btn-translator" onclick="switchMode('translator')">🌐 Translate</button>
+        <button class="menu-btn" id="btn-memory" onclick="switchMode('memory')">🏰 Memory</button>
+        <button class="menu-btn" id="btn-simulator" onclick="switchMode('simulator')">🚨 Exam</button>
         </div>
 
-        <div id="guide-box" class="guide-box">
-            <strong>🛠️ 30-Second Free Key Guide:</strong><br>
-            1. Go to <a href="https://aistudio.google.com/" target="_blank" style="color: #dd6b20; font-weight: bold;">Google AI Studio</a>.<br>
-            2. Click <strong>"Get API Key"</strong> and generate a dynamic sequence token.<br>
-            3. Copy the string value and paste it directly into the password box above.
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-bottom: 20px;">
-
+    <div class="main-content">
+        <input type="password" id="user-key" placeholder="Enter API Key">
         <div id="mode-chat" class="mode-window active">
-            <h3>💬 Ask AI Tutor</h3>
-            <div id="chat-output" class="display-output"><b>System:</b> Ready to assist your target grade! Type '46' to see a developer surprise!</div>
-            <div class="input-area"><input type="text" id="chat-input" placeholder="Ask a question..."><button class="action-btn" onclick="runPipeline('chat', 'chat-input', 'chat-output')">Ask</button></div>
+            <h3>💬 Chat</h3>
+            <div id="chat-output" class="display-output"></div>
+            <input type="text" id="chat-input"><button onclick="runPipeline('chat', 'chat-input', 'chat-output')">Send</button>
         </div>
-
         <div id="mode-calculator" class="mode-window">
-            <h3>🧮 Math Solver</h3>
-            <div id="calc-output" class="display-output"><b>System:</b> Input any problem statement for calculation...</div>
-            <div class="input-area"><input type="text" id="calc-input" placeholder="e.g. integrate log(x)"><button class="action-btn" onclick="runPipeline('calculator', 'calc-input', 'calc-output')">Solve</button></div>
+            <h3>🧮 Math</h3>
+            <div id="calc-output" class="display-output"></div>
+            <input type="text" id="calc-input"><button onclick="runPipeline('calculator', 'calc-input', 'calc-output')">Solve</button>
+        </div>
         </div>
 
-        <div id="mode-translator" class="mode-window">
-            <h3>🌐 Language Translator</h3>
-            <div style="margin-bottom:10px;"><select id="target-lang" style="max-width:200px;"><option value="Hindi">Hindi</option><option value="Marathi">Marathi</option><option value="Tamil">Tamil</option><option value="Spanish">Spanish</option></select></div>
-            <div id="trans-output" class="display-output"><b>System:</b> Ready to translate text...</div>
-            <div class="input-area"><input type="text" id="trans-input" placeholder="Enter text..."><button class="action-btn" onclick="runPipeline('translator', 'trans-input', 'trans-output')">Translate</button></div>
-        </div>
-
-        <div id="mode-test" class="mode-window">
-            <h3>⏱️ Test & PYQ Mode</h3>
-            <div id="test-output" class="display-output"><b>System:</b> Tap below to fetch an adaptive evaluation problem.</div>
-            <button class="action-btn" onclick="runDirectPrompt('test', 'Generate a relevant practice question.', 'test-output')">🎯 Get Question</button>
-        </div>
-
-        <div id="mode-notes" class="mode-window">
-            <h3>📝 Notes Maker</h3>
-            <div id="notes-output" class="display-output"><b>System:</b> Submit complex text content to distill structural facts.</div>
-            <div class="input-area"><input type="text" id="notes-input" placeholder="Paste text data..."><button class="action-btn" onclick="runPipeline('notes', 'notes-input', 'notes-output')">Make Notes</button></div>
-        </div>
-
-        <div id="mode-visuals" class="mode-window">
-            <h3>📊 Charts & Diagrams</h3>
-            <div id="visuals-output" class="display-output"><b>System:</b> Request structural layout steps...</div>
-            <div class="input-area"><input type="text" id="visuals-input" placeholder="e.g. Map human heart blood cycle path"><button class="action-btn" onclick="runPipeline('visuals', 'visuals-input', 'visuals-output')">Build Layout</button></div>
-        </div>
-
-        <div id="mode-flashcards" class="mode-window">
-            <h3>🃏 Flashcard Generator</h3>
-            <div id="flashcards-output" class="display-output"><b>System:</b> Input a subject to map fast review lists...</div>
-            <div class="input-area"><input type="text" id="flashcards-input" placeholder="Enter topic..."><button class="action-btn" onclick="runPipeline('flashcards', 'flashcards-input', 'flashcards-output')">Create Cards</button></div>
-        </div>
-
-        <div id="mode-planner" class="mode-window">
-            <h3>📅 Study Timetable</h3>
-            <div id="planner-output" class="display-output"><b>System:</b> State your time limits or target syllabus blocks...</div>
-            <div class="input-area"><input type="text" id="planner-input" placeholder="e.g. 60 days layout planner..."><button class="action-btn" onclick="runPipeline('planner', 'planner-input', 'planner-output')">Plan</button></div>
-        </div>
-
-        <div id="mode-eli5" class="mode-window">
-            <h3>💡 Explain Like I'm 5</h3>
-            <div id="eli5-output" class="display-output"><b>System:</b> Enter tough theories to filter them down into simple stories...</div>
-            <div class="input-area"><input type="text" id="eli5-input" placeholder="e.g. Relativity theory..."><button class="action-btn" onclick="runPipeline('eli5', 'eli5-input', 'eli5-output')">Simplify</button></div>
-        </div>
-
-        <div id="mode-debate" class="mode-window">
-            <h3>⚖️ AI Debate Partner</h3>
-            <div id="debate-output" class="display-output"><b>System:</b> Pick any topic to argue with the AI.</div>
-            <div class="input-area"><input type="text" id="debate-input" placeholder="State your point of view..."><button class="action-btn" onclick="runPipeline('debate', 'debate-input', 'debate-output')">Argue</button></div>
-        </div>
-
-        <div id="mode-memory" class="mode-window">
-            <h3>🏰 Memory Palace Maker</h3>
-            <div id="memory-output" class="display-output"><b>System:</b> Provide a list of elements or dates you find hard to memorize.</div>
-            <div class="input-area"><input type="text" id="memory-input" placeholder="Paste items to memorize..."><button class="action-btn" onclick="runPipeline('memory', 'memory-input', 'memory-output')">Build Palace</button></div>
-        </div>
-
-        <div id="mode-simulator" class="mode-window">
-            <h3>🚨 Exam Day Simulator</h3>
-            <div id="simulator-output" class="display-output"><b>System:</b> Step up to the examination desk. No cheating allowed!</div>
-            <button class="action-btn" onclick="runDirectPrompt('simulator', 'Present a surprise exam question under strict testing criteria.', 'simulator-output')">⏱️ Start Sudden Exam</button>
-        </div>
-
-        <div id="mode-career" class="mode-window">
-            <h3>💼 Career Counselor</h3>
-            <div id="career-output" class="display-output"><b>System:</b> Share your interests or preferred school tracks to analyze career paths.</div>
-            <div class="input-area"><input type="text" id="career-input" placeholder="Type what you like doing..."><button class="action-btn" onclick="runPipeline('career', 'career-input', 'career-output')">Get Guidance</button></div>
-        </div>
-
-        <div id="mode-grader" class="mode-window">
-            <h3>✍️ Essay/Answer Grader</h3>
-            <div id="grader-output" class="display-output"><b>System:</b> Paste descriptive textbook answers to receive critical marks.</div>
-            <div class="input-area"><input type="text" id="grader-input" placeholder="Paste your written answer..."><button class="action-btn" onclick="runPipeline('grader', 'grader-input', 'grader-output')">Grade Answer</button></div>
-        </div>
-
-        <div id="mode-cheatsheet" class="mode-window">
-            <h3>🧬 Formula Cheat Sheet</h3>
-            <div id="cheatsheet-output" class="display-output"><b>System:</b> Provide a science/math chapter name to extract structural formulas.</div>
-            <div class="input-area"><input type="text" id="cheatsheet-input" placeholder="e.g., Trigonometry"><button class="action-btn" onclick="runPipeline('cheatsheet', 'cheatsheet-input', 'cheatsheet-output')">Build Sheet</button></div>
-        </div>
-
-        <div id="mode-popculture" class="mode-window">
-            <h3>🍿 Pop Culture Teacher</h3>
-            <div id="pop-output" class="display-output"><b>System:</b> Give the AI an academic topic you find dry or boring.</div>
-            <div class="input-area"><input type="text" id="pop-input" placeholder="e.g., Mitosis or Law of Demand"><button class="action-btn" onclick="runPipeline('popculture', 'pop-input', 'pop-output')">Gamify Explanation</button></div>
-        </div>
-
-        <div id="mode-break" class="mode-window">
-            <h3>🧘‍♂️ Mindful Break Room</h3>
-            <div id="break-output" class="display-output"><b>System:</b> Feeling tired? Let's take a refreshing mental break.</div>
-            <button class="action-btn" onclick="runDirectPrompt('break', 'Give me an interactive study break game, riddle, or short mindfulness activity.', 'break-output')">☕ Take a Break</button>
-        </div>
-
-        <div id="mode-voice" class="mode-window">
-            <h3>🗣️ Kids Voice Room</h3>
-            <button class="action-btn" onclick="startVoiceRecognition()">🎙️ Tap to Speak</button>
-            <div id="voice-output" class="display-output" style="margin-top:15px;"><b>System:</b> Audio streams will translate out text inputs here...</div>
-        </div>
-
-        <div id="mode-scanner" class="mode-window">
-            <h3>📂 Textbook Scanner</h3>
-            <input type="file" id="scanner-file" accept="image/*" style="margin-bottom:15px;"><br>
-            <button class="action-btn" onclick="simulateScanner()">📷 Analyze Document Snapshot</button>
-            <div id="scanner-output" class="display-output" style="margin-top:15px;"><b>System:</b> Extracted image elements will write text fields...</div>
-        </div>
-
-    </div>
-</div>
-
-<script>
-    let questionsAskedCount = 0;
-
-    function toggleGuide() {
-        let box = document.getElementById('guide-box');
-        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function switchMode(modeName) {
-        document.querySelectorAll('.mode-window').forEach(win => win.classList.remove('active'));
-        document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('mode-' + modeName).classList.add('active');
-        document.getElementById('btn-' + modeName).classList.add('active');
-    }
-
-    function runPipeline(mode, inputId, outputId) {
-        let textInput = document.getElementById(inputId).value.trim();
-        if(textInput === "") return;
-        
-        let outputBox = document.getElementById(outputId);
-        let currentApiKey = document.getElementById('user-key').value.trim();
-        
-        outputBox.innerHTML += `<p><strong>You:</strong> ${textInput}</p><p class="loading-status"><i>Connecting to Gemini AI Engine...</i></p>`;
-        outputBox.scrollTop = outputBox.scrollHeight;
-        
-        document.getElementById(inputId).value = "";
-        updateTracker();
-
-        fetch('/ask_ai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                message: textInput, 
-                mode: mode,
-                api_key: currentApiKey,
-                student_class: document.getElementById('student-class').value,
-                board: document.getElementById('student-board').value,
-                stream: document.getElementById('student-stream').value,
-                target_lang: document.getElementById('target-lang') ? document.getElementById('target-lang').value : 'Hindi'
-            })
-        })
-        .then(res => res.json())
-        .then(data => { 
-            let loadingLines = outputBox.getElementsByClassName('loading-status');
-            while(loadingLines.length > 0){
-                loadingLines[0].parentNode.removeChild(loadingLines[0]);
-            }
-            
-            outputBox.innerHTML += `<p><strong>Buddy:</strong><br>${data.reply.replace(/\n/g, '<br>')}</p><hr style="border:0; border-top:1px dashed #cbd5e1;">`; 
-            outputBox.scrollTop = outputBox.scrollHeight; 
-        });
-    }
-
-    function runDirectPrompt(mode, hardcodedPrompt, outputId) {
-        let outputBox = document.getElementById(outputId);
-        let currentApiKey = document.getElementById('user-key').value.trim();
-        outputBox.innerHTML = `<i>Connecting to server pipeline...</i>`;
-        updateTracker();
-
-        fetch('/ask_ai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                message: hardcodedPrompt, 
-                mode: mode,
-                api_key: currentApiKey,
-                student_class: document.getElementById('student-class').value,
-                board: document.getElementById('student-board').value,
-                stream: document.getElementById('student-stream').value
-            })
-        })
-        .then(res => res.json()).then(data => { 
-            outputBox.innerHTML = `<b>Buddy:</b><br>${data.reply.replace(/\n/g, '<br>')}`; 
-        });
-    }
-
-    function updateTracker() { questionsAskedCount++; document.getElementById('question-count').innerText = questionsAskedCount; }
-
-    function startVoiceRecognition() {
-        let outputBox = document.getElementById('voice-output');
-        let currentApiKey = document.getElementById('user-key').value.trim();
-        outputBox.innerHTML = "<i>Listening... Speak now!</i>";
-        setTimeout(() => {
-            outputBox.innerHTML = "<b>Voice Transcript:</b> 'Tell me a story about space'\n<i>Routing to AI...</i>";
+    <script>
+        function switchMode(m) {
+            document.querySelectorAll('.mode-window').forEach(w => w.classList.remove('active'));
+            document.getElementById('mode-'+m).classList.add('active');
+        }
+        function runPipeline(mode, inputId, outputId) {
+            let msg = document.getElementById(inputId).value;
+            let key = document.getElementById('user-key').value;
             fetch('/ask_ai', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Tell me a short bedtime story about stars.", mode: 'eli5', api_key: currentApiKey, student_class: 'Preschool (Age 3-5)' })
-            })
-            .then(res => res.json()).then(data => {
-                outputBox.innerHTML = `<b>Buddy Speaks:</b><br>${data.reply.replace(/\n/g, '<br>')}`;
-                let speech = new SpeechSynthesisUtterance(data.reply); window.speechSynthesis.speak(speech);
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msg, mode: mode, api_key: key})
+            }).then(r => r.json()).then(d => {
+                document.getElementById(outputId).innerHTML += `<p><b>Buddy:</b> ${d.reply}</p>`;
             });
-        }, 3000);
-    }
-
-    function simulateScanner() {
-        let outputBox = document.getElementById('scanner-output');
-        let currentApiKey = document.getElementById('user-key').value.trim();
-        if(document.getElementById('scanner-file').files.length === 0) { alert("Please pick an image file first!"); return; }
-        outputBox.innerHTML = "<i>Analyzing structural image document text data elements...</i>";
-        setTimeout(() => {
-            outputBox.innerHTML = "<b>Detected Text Problem:</b> Solve 5x + 3 = 18\n<i>Sending to AI Solver...</i>";
-            fetch('/ask_ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Solve 5x + 3 = 18 step by step", mode: 'calculator', api_key: currentApiKey }) })
-            .then(res => res.json()).then(data => { 
-                outputBox.innerHTML = `<b>Scanner Explanation Output:</b><br>${data.reply.replace(/\n/g, '<br>')}`; 
-            });
-        }, 2500);
-    }
-</script>
-
+        }
+    </script>
 </body>
 </html>
