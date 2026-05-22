@@ -1,1 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Universal AI Study Hub</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial;
+background:#0f172a;
+display:flex;
+height:100vh;
+overflow:hidden;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+width:280px;
+
+background:linear-gradient(
+180deg,
+#0f172a,
+#1e293b
+);
+
+padding:20px;
+
+overflow-y:auto;
+
+border-right:2px solid #38bdf8;
+}
+
+.logo{
+
+color:white;
+
+font-size:28px;
+
+font-weight:bold;
+
+margin-bottom:20px;
+}
+
+.logo span{
+color:#38bdf8;
+}
+
+.menu-btn{
+
+width:100%;
+
+padding:14px;
+
+margin:6px 0;
+
+border:none;
+
+border-radius:10px;
+
+background:#1e293b;
+
+color:white;
+
+font-size:15px;
+
+cursor:pointer;
+
+transition:0.3s;
+
+text-align:left;
+}
+
+.menu-btn:hover,
+.menu-btn.active{
+
+background:#38bdf8;
+
+color:black;
+
+transform:translateX(5px);
+}
+
+/* MAIN */
+
+.main{
+
+flex:1;
+
+padding:20px;
+
+overflow-y:auto;
+}
+
+/* TOPBAR */
+
+.topbar{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:10px;
+
+margin-bottom:20px;
+}
+
+.topbar input,
+.topbar select{
+
+padding:12px;
+
+border:none;
+
+border-radius:10px;
+
+background:#1e293b;
+
+color:white;
+
+outline:none;
+}
+
+/* WINDOWS */
+
+.mode-window{
+
+display:none;
+
+background:#111827;
+
+padding:20px;
+
+border-radius:15px;
+
+border:1px solid #334155;
+
+box-shadow:0 0 20px rgba(56,189,248,0.1);
+}
+
+.mode-window.active{
+display:block;
+}
+
+.mode-title{
+
+color:#38bdf8;
+
+margin-bottom:15px;
+}
+
+.output{
+
+height:380px;
+
+overflow-y:auto;
+
+background:#0f172a;
+
+border:1px solid #334155;
+
+padding:15px;
+
+border-radius:10px;
+
+color:#e2e8f0;
+
+white-space:pre-wrap;
+
+margin-bottom:15px;
+}
+
+/* INPUT */
+
+.input-area{
+
+display:flex;
+
+gap:10px;
+}
+
+.input-area input{
+
+flex:1;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
+
+background:#1e293b;
+
+color:white;
+
+outline:none;
+}
+
+.input-area button{
+
+padding:14px 20px;
+
+border:none;
+
+border-radius:10px;
+
+background:#38bdf8;
+
+font-weight:bold;
+
+cursor:pointer;
+}
+
+.input-area button:hover{
+opacity:0.9;
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#38bdf8;
+border-radius:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+🚀 <span>AI Mega Suite</span>
+</div>
+
+<button class="menu-btn active" onclick="switchMode('chat')" id="btn-chat">💬 Chat</button>
+
+<button class="menu-btn" onclick="switchMode('calculator')" id="btn-calculator">🧮 Math Solver</button>
+
+<button class="menu-btn" onclick="switchMode('translator')" id="btn-translator">🌐 Translator</button>
+
+<button class="menu-btn" onclick="switchMode('test')" id="btn-test">📝 Mock Exam</button>
+
+<button class="menu-btn" onclick="switchMode('notes')" id="btn-notes">📄 Notes</button>
+
+<button class="menu-btn" onclick="switchMode('visuals')" id="btn-visuals">📊 Visuals</button>
+
+<button class="menu-btn" onclick="switchMode('flashcards')" id="btn-flashcards">🃏 Flashcards</button>
+
+<button class="menu-btn" onclick="switchMode('planner')" id="btn-planner">📅 Planner</button>
+
+<button class="menu-btn" onclick="switchMode('eli5')" id="btn-eli5">👶 ELI5</button>
+
+<button class="menu-btn" onclick="switchMode('debate')" id="btn-debate">🗣️ Debate</button>
+
+<button class="menu-btn" onclick="switchMode('memory')" id="btn-memory">🏰 Memory</button>
+
+<button class="menu-btn" onclick="switchMode('simulator')" id="btn-simulator">🚨 Simulator</button>
+
+<button class="menu-btn" onclick="switchMode('career')" id="btn-career">💼 Career</button>
+
+<button class="menu-btn" onclick="switchMode('grader')" id="btn-grader">✅ Grader</button>
+
+<button class="menu-btn" onclick="switchMode('cheatsheet')" id="btn-cheatsheet">📝 Cheat Sheet</button>
+
+<button class="menu-btn" onclick="switchMode('popculture')" id="btn-popculture">🍿 Pop Culture</button>
+
+<button class="menu-btn" onclick="switchMode('break')" id="btn-break">🧘 Break</button>
+
+<button class="menu-btn" onclick="switchMode('voice')" id="btn-voice">🎙️ Voice</button>
+
+<button class="menu-btn" onclick="switchMode('scanner')" id="btn-scanner">📷 Scanner</button>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<input
+type="password"
+id="user-key"
+placeholder="Enter Gemini API Key"
+>
+
+<select id="target-lang">
+
+<option>Hindi</option>
+<option>French</option>
+<option>Spanish</option>
+<option>Marathi</option>
+<option>German</option>
+
+</select>
+
+</div>
+
+<div id="windows"></div>
+
+</div>
+
+<script>
+
+const modes = [
+
+"chat",
+"calculator",
+"translator",
+"test",
+"notes",
+"visuals",
+"flashcards",
+"planner",
+"eli5",
+"debate",
+"memory",
+"simulator",
+"career",
+"grader",
+"cheatsheet",
+"popculture",
+"break",
+"voice",
+"scanner"
+
+];
+
+const windowsDiv = document.getElementById("windows");
+
+/* CREATE WINDOWS */
+
+modes.forEach(mode => {
+
+windowsDiv.innerHTML += `
+
+<div class="mode-window ${mode==='chat'?'active':''}" id="mode-${mode}">
+
+<h2 class="mode-title">
+
+${mode.toUpperCase()}
+
+</h2>
+
+<div class="output" id="${mode}-output">
+
+🚀 Welcome to ${mode} mode...
+
+</div>
+
+<div class="input-area">
+
+<input
+type="text"
+id="${mode}-input"
+placeholder="Type here..."
+>
+
+<button onclick="runPipeline('${mode}')">
+
+Ask AI
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+/* SWITCH MODES */
+
+function switchMode(mode){
+
+document.querySelectorAll('.mode-window')
+.forEach(w => w.classList.remove('active'));
+
+document.querySelectorAll('.menu-btn')
+.forEach(b => b.classList.remove('active'));
+
+document.getElementById('mode-'+mode)
+.classList.add('active');
+
+document.getElementById('btn-'+mode)
+.classList.add('active');
+}
+
+/* AI */
+
+async function runPipeline(mode){
+
+let input = document.getElementById(mode+'-input').value;
+
+let output = document.getElementById(mode+'-output');
+
+if(input.trim()===""){
+return;
+}
+
+output.innerHTML += `
+
+🧑 YOU:
+${input}
+
+🤖 AI:
+Thinking...
+
+`;
+
+output.scrollTop = output.scrollHeight;
+
+try{
+
+let response = await fetch('/ask_ai',{
+
+method:'POST',
+
+headers:{
+'Content-Type':'application/json'
+},
+
+body:JSON.stringify({
+
+message:input,
+
+mode:mode,
+
+api_key:document.getElementById('user-key').value,
+
+target_lang:document.getElementById('target-lang').value
+
+})
+
+});
+
+let data = await response.json();
+
+output.innerHTML += `
+
+${data.reply}
+
+────────────────────
+
+`;
+
+output.scrollTop = output.scrollHeight;
+
+document.getElementById(mode+'-input').value = "";
+
+}
+
+catch(error){
+
+output.innerHTML += `
+
+❌ Server Error
+
+`;
+}
+
+}
+
+</script>
+
+</body>
+</html>
