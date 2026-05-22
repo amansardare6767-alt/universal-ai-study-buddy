@@ -59,6 +59,3 @@ def ask_ai():
         return jsonify({'reply': response.text})
     except Exception as e:
         return jsonify({'reply': f"❌ API Error: {str(e)}"})
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
