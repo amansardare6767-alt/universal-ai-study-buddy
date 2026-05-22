@@ -19,7 +19,7 @@
         label { font-size: 11px; font-weight: bold; color: #4a5568; display: block; margin-bottom: 4px; }
         select, input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
         
-        /* 📖 Key Guide Accordion Styling */
+        /* Guide Info Styling */
         .guide-link { font-size: 11px; color: #2b6cb0; cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 4px; display: inline-block; }
         .guide-box { display: none; background: #fffaf0; border: 1px dashed #dd6b20; padding: 12px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; color: #744210; line-height: 1.5; }
         
@@ -30,10 +30,10 @@
         .action-btn { padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .action-btn:hover { background-color: #2b4c7e; }
 
-        /* 📱 Responsive Mobile Adjustments */
+        /* 📱 Responsive Mobile View Media Queries */
         @media (max-width: 768px) {
             body { flex-direction: column; height: auto; }
-            .sidebar { width: 100%; box-sizing: border-box; height: 250px; }
+            .sidebar { width: 100%; box-sizing: border-box; height: 220px; }
             .main-content { padding: 10px; width: 100%; box-sizing: border-box; }
             .container { padding: 15px; }
             .setup-row { flex-direction: column; gap: 12px; }
@@ -119,9 +119,9 @@
 
         <div id="guide-box" class="guide-box">
             <strong>🛠️ 30-Second Free Key Guide:</strong><br>
-            1. Go to <a href="https://aistudio.google.com/" target="_blank" style="color: #dd6b20; font-weight: bold;">Google AI Studio</a> and log in with your normal Gmail account.<br>
-            2. Click the blue <strong>"Get API Key"</strong> button on the top left interface panel.<br>
-            3. Tap <strong>"Create API Key"</strong>, copy your generated sequence, paste it into the secure input box above, and you're good to go!
+            1. Go to <a href="https://aistudio.google.com/" target="_blank" style="color: #dd6b20; font-weight: bold;">Google AI Studio</a>.<br>
+            2. Click <strong>"Get API Key"</strong> and generate a dynamic sequence token.<br>
+            3. Copy the string value and paste it directly into the password box above.
         </div>
 
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-bottom: 20px;">
@@ -183,7 +183,7 @@
 
         <div id="mode-debate" class="mode-window">
             <h3>⚖️ AI Debate Partner</h3>
-            <div id="debate-output" class="display-output"><b>System:</b> Pick any topic (e.g., 'Is colonization bad?') to argue with the AI.</div>
+            <div id="debate-output" class="display-output"><b>System:</b> Pick any topic to argue with the AI.</div>
             <div class="input-area"><input type="text" id="debate-input" placeholder="State your point of view..."><button class="action-btn" onclick="runPipeline('debate', 'debate-input', 'debate-output')">Argue</button></div>
         </div>
 
@@ -248,7 +248,6 @@
 <script>
     let questionsAskedCount = 0;
 
-    // 📖 Toggle Key Generation Instructions Box
     function toggleGuide() {
         let box = document.getElementById('guide-box');
         box.style.display = (box.style.display === 'block') ? 'none' : 'block';
@@ -266,8 +265,9 @@
         if(textInput === "") return;
         
         let outputBox = document.getElementById(outputId);
+        let currentApiKey = document.getElementById('user-key').value.trim();
         
-        // 1. Append the user question cleanly so it doesn't vanish
+        // 1. Append the user question beautifully
         outputBox.innerHTML += `<p><strong>You:</strong> ${textInput}</p><p class="loading-status"><i>Connecting to Gemini AI Engine...</i></p>`;
         outputBox.scrollTop = outputBox.scrollHeight;
         
@@ -279,8 +279,9 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                message: textInput, mode: mode,
-                api_key: document.getElementById('user-key').value,
+                message: textInput, 
+                mode: mode,
+                api_key: currentApiKey,
                 student_class: document.getElementById('student-class').value,
                 board: document.getElementById('student-board').value,
                 stream: document.getElementById('student-stream').value,
@@ -295,7 +296,7 @@
                 loadingLines[0].parentNode.removeChild(loadingLines[0]);
             }
             
-            // 4. Print your Buddy's answer right underneath your question!
+            // 4. Print your Buddy's answer cleanly!
             outputBox.innerHTML += `<p><strong>Buddy:</strong><br>${data.reply.replace(/\n/g, '<br>')}</p><hr style="border:0; border-top:1px dashed #cbd5e1;">`; 
             outputBox.scrollTop = outputBox.scrollHeight; 
         });
@@ -303,6 +304,7 @@
 
     function runDirectPrompt(mode, hardcodedPrompt, outputId) {
         let outputBox = document.getElementById(outputId);
+        let currentApiKey = document.getElementById('user-key').value.trim();
         outputBox.innerHTML = `<i>Connecting to server pipeline...</i>`;
         updateTracker();
 
@@ -310,8 +312,9 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                message: hardcodedPrompt, mode: mode,
-                api_key: document.getElementById('user-key').value,
+                message: hardcodedPrompt, 
+                mode: mode,
+                api_key: currentApiKey,
                 student_class: document.getElementById('student-class').value,
                 board: document.getElementById('student-board').value,
                 stream: document.getElementById('student-stream').value
@@ -324,12 +327,13 @@
 
     function startVoiceRecognition() {
         let outputBox = document.getElementById('voice-output');
+        let currentApiKey = document.getElementById('user-key').value.trim();
         outputBox.innerHTML = "<i>Listening... Speak now!</i>";
         setTimeout(() => {
             outputBox.innerHTML = "<b>Voice Transcript:</b> 'Tell me a story about space'\n<i>Routing to AI...</i>";
             fetch('/ask_ai', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Tell me a short bedtime story about stars.", mode: 'eli5', api_key: document.getElementById('user-key').value, student_class: 'Preschool (Age 3-5)' })
+                body: JSON.stringify({ message: "Tell me a short bedtime story about stars.", mode: 'eli5', api_key: currentApiKey, student_class: 'Preschool (Age 3-5)' })
             })
             .then(res => res.json()).then(data => {
                 outputBox.innerHTML = `<b>Buddy Speaks:</b>\n${data.reply}`;
@@ -340,11 +344,12 @@
 
     function simulateScanner() {
         let outputBox = document.getElementById('scanner-output');
+        let currentApiKey = document.getElementById('user-key').value.trim();
         if(document.getElementById('scanner-file').files.length === 0) { alert("Please pick an image file first!"); return; }
         outputBox.innerHTML = "<i>Analyzing structural image document text data elements...</i>";
         setTimeout(() => {
             outputBox.innerHTML = "<b>Detected Text Problem:</b> Solve 5x + 3 = 18\n<i>Sending to AI Solver...</i>";
-            fetch('/ask_ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Solve 5x + 3 = 18 step by step", mode: 'calculator', api_key: document.getElementById('user-key').value }) })
+            fetch('/ask_ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Solve 5x + 3 = 18 step by step", mode: 'calculator', api_key: currentApiKey }) })
             .then(res => res.json()).then(data => { outputBox.innerHTML = `<b>Scanner Explanation Output:</b>\n${data.reply}`; });
         }, 2500);
     }
