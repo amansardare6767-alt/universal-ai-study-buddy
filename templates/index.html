@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Universal AI Study Hub</title>
+    <style>
+        /* Keep your existing CSS here */
+        body { font-family: Arial; background: #0f172a; display: flex; height: 100vh; color: white; }
+        .sidebar { width: 280px; background: #1e293b; padding: 20px; overflow-y: auto; }
+        .main { flex: 1; padding: 20px; overflow-y: auto; }
+        .mode-window { display: none; }
+        .mode-window.active { display: block; }
+        .output { height: 350px; overflow-y: auto; background: #000; padding: 15px; margin-bottom: 10px; border-radius: 10px; white-space: pre-wrap; }
+        .input-area { display: flex; gap: 10px; }
+        input, button { padding: 10px; border-radius: 5px; border: none; }
+    </style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="logo">🚀 <span>AI Mega Suite</span></div>
+    <!-- Add buttons here same as your previous code -->
+</div>
 
+<div class="main">
+    <div class="topbar">
+        <input type="password" id="user-key" placeholder="Enter Gemini API Key">
+    </div>
+    <div id="windows"></div>
+</div>
+
+<script>
+async function runPipeline(mode) {
+    let inputField = document.getElementById(mode+'-input');
+    let output = document.getElementById(mode+'-output');
+    let input = inputField.value;
+    
+    if(!input) return;
+
+    // Show user message
+    output.innerHTML += `\n\n🧑 YOU: ${input}\n🤖 AI: `;
+    let thinkingLabel = document.createElement('span');
+    thinkingLabel.innerText = "Thinking...";
+    output.appendChild(thinkingLabel);
+    
+    inputField.value = "";
+    output.scrollTop = output.scrollHeight;
+
+    try {
+        let response = await fetch('/ask_ai', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                message: input,
+                mode: mode,
+                api_key: document.getElementById('user-key').value,
+                target_lang: document.getElementById('target-lang')?.value || 'Hindi'
+            })
+        });
+        let data = await response.json();
+        output.removeChild(thinkingLabel); // Remove "Thinking..."
+        output.innerHTML += data.reply + "\n────────────────────";
+    } catch(e) {
+        thinkingLabel.innerText = "❌ Error connecting.";
+    }
+}
+</script>
+</body>
+</html>
